@@ -14,7 +14,7 @@ const weatherMin = document.querySelector('.weatherMin');
 const weatherMax = document.querySelector('.weatherMax');
 const searchCity = document.querySelector('.search-div');
 
-//to get actual country name
+//to get actual country name 
 const getCountryName = (countryCode) => {
     return new Intl.DisplayNames([countryCode], { type: 'region' }).of(countryCode);
 }
@@ -24,14 +24,14 @@ const getDateTime = (dt) => {
     const curDate = new Date(dt * 1000) //date in milliseconds
     const options = {
         weekday: 'long',
-        year: 'numeric', 
+        year: 'numeric',
         month: 'long',
         day: 'numeric',
         hour: 'numeric',
         minute: 'numeric',
     };
 
-    const formatter = new Intl.DateTimeFormat ('en-US', options);
+    const formatter = new Intl.DateTimeFormat('en-US', options);
     return formattedDate = formatter.format(curDate)
 }
 
@@ -39,11 +39,11 @@ const getDateTime = (dt) => {
 let city = 'Patna'
 searchCity.addEventListener('submit', (e) => {
     e.preventDefault();
-    
+
     let cityName = document.querySelector('#search-field');
     city = cityName.value;
     getWeatherData();
-    cityName.value = ""; 
+    cityName.value = "";
 })
 
 const getWeatherData = async () => {
@@ -55,18 +55,25 @@ const getWeatherData = async () => {
         console.log(data);
 
         //data destructuring
-        const {main, name, weather, wind, sys, dt} = data;
+        const { main, name, weather, wind, sys, dt } = data;
         cityName.innerHTML = `${name}, ${getCountryName(sys.country)}`
         curDateTime.innerHTML = `${getDateTime(dt)}`;
-        weatherInDegree.innerHTML = `${main.temp}&#176`;
-        weatherMin.innerHTML = `Min: ${main.temp_min.toFixed()}&#176`;
-        weatherMax.innerHTML = `Max: ${main.temp_max.toFixed()}&#176`;
+        let kelvinTemp = main.temp;
+        let celsiusTemp = kelvinTemp - 273.15; // Convert Kelvin to Celsius
+        weatherInDegree.innerHTML = `${celsiusTemp.toFixed(2)}&#176;C`;
+        let kelvinTempMIn = main.temp_min;
+        let celsiusMin = kelvinTempMIn - 273.15; // convert kelvin to celsius
+        weatherMin.innerHTML = `Min: ${celsiusMin.toFixed(2)}&#176;C`;
+        let kelvinTempMax = main.temp_max;
+        let celsiusMax = kelvinTempMax - 273.15;
+        weatherMax.innerHTML = `Max: ${celsiusMax.toFixed(2)}&#176;C`;
 
         weatherForcast.innerHTML = `${weather[0].main}`;
         weatherIcon.innerHTML = `<img src="https://openweathermap.org/img/wn/${weather[0].icon}@2x.png"/>`
 
         //Footer section or additional section 
-        document.querySelector('.whether-feelsLike').innerHTML = `${main.feels_like.toFixed(2)}&#176`;
+        let kelvinMainFeel = main.feels_like - 273.15;
+        document.querySelector('.whether-feelsLike').innerHTML = `${kelvinMainFeel.toFixed(2)}&#176`;
         document.querySelector('.whether-humidity').innerHTML = `${main.humidity}`;
         document.querySelector('.whether-wind').innerHTML = `${wind.speed.toFixed(2)}`;
         document.querySelector('.whether-pressure').innerHTML = `${main.pressure}`;
